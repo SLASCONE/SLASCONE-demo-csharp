@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.452
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slascone.Provisioning.Sample", "Slascone.Provisioning.Sample\Slascone.Provisioning.Sample.csproj", "{D1163032-1A45-4B19-A104-894E25BCF47F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1163032-1A45-4B19-A104-894E25BCF47F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1163032-1A45-4B19-A104-894E25BCF47F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1163032-1A45-4B19-A104-894E25BCF47F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1163032-1A45-4B19-A104-894E25BCF47F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0D8A7BFE-E880-4CA5-8925-362D9A01786B}
+	EndGlobalSection
+EndGlobal
