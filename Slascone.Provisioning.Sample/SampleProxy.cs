@@ -1,9 +1,10 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Management;
+using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Slascone.Provisioning.Sample.Model;
@@ -131,21 +132,17 @@ namespace Slascone.Provisioning.Sample
         /// <summary>
         /// Creates a analytical heartbeat
         /// </summary>
-        /// <param name="uniqueDeviceId">Is the id which identifies the device.</param>
-        /// <param name="analyticalFieldId">Specifies the analytical field.</param>
-        /// <param name="analyticalFieldValue">Specifies the value of the analytical heartbeat.</param>
-        /// <param name="deviceLicenseKey">Can be a DeviceLicenseKey, LicenseKey or LegacyLicenseKey.</param>
+        /// <param name="analyticalHeartbeat">Is the object which contains all analytical Heartbeat Information.</param>
         /// <returns>"Successfully created analytical heartbeat." or a WarningInfoDto</returns>
-        public async Task<string> AddAnalyticalHeartbeatAsync(string uniqueDeviceId, Guid analyticalFieldId, string analyticalFieldValue,
-            string deviceLicenseKey)
+        public async Task<string> AddAnalyticalHeartbeatAsync(AnalyticalHeartbeat analyticalHeartbeat)
         {
             var uri = new UriBuilder(ApiBaseUrl)
             {
                 Path =
-                    $"api/ProductAnalytics/isv/{IsvId}/devices/{uniqueDeviceId}/analyticalFields/{analyticalFieldId}/analyticalHeartbeat?analyticalFieldValue={analyticalFieldValue}&deviceLicenseKey={deviceLicenseKey}"
+                    $"api/ProductAnalytics/isv/{IsvId}/analyticalHeartbeat"
             };
 
-            var response = await _httpClient.PostAsync(uri.Uri, null);
+            var response = await _httpClient.PostAsync(uri.Uri, analyticalHeartbeat, new JsonMediaTypeFormatter());
             var content = await response.Content.ReadAsStringAsync();
 
             // If generating a analytical heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".

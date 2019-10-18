@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Slascone.Provisioning.Sample.Model;
 
 namespace Slascone.Provisioning.Sample
 {
@@ -44,7 +46,12 @@ namespace Slascone.Provisioning.Sample
             }
 
             // ToDo
-            var analyticalHeartbeatResult = await slasconeProxy.AddAnalyticalHeartbeatAsync("", Guid.NewGuid(), "", "");
+            var analyticalHb = new AnalyticalHeartbeat();
+            analyticalHb.AnalyticalHeartbeatInfo = new List<AnalyticalFieldValue>();
+            analyticalHb.DeviceLicenseKey = "";
+            analyticalHb.UniqueDeviceId = "";
+
+            var analyticalHeartbeatResult = await slasconeProxy.AddAnalyticalHeartbeatAsync(analyticalHb);
 
             Console.WriteLine(analyticalHeartbeatResult);
             
