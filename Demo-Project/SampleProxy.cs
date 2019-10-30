@@ -160,6 +160,11 @@ namespace Slascone.Provisioning.Sample
             throw new Exception(response.StatusCode.ToString());
         }
 
+        /// <summary>
+        /// Creates a usage heartbeat
+        /// </summary>
+        /// <param name="usageHeartbeatDto">Is the object which contains all usage Heartbeat Information.</param>
+        /// <returns>"Successfully created usage heartbeat." or a WarningInfoDto</returns>
         public async Task<string> AddUsageHeartbeat(UsageHeartbeatDto usageHeartbeatDto)
         {
             var uri = new UriBuilder(ApiBaseUrl)
