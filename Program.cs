@@ -19,6 +19,8 @@ namespace Slascone.Provisioning.Sample
 
             var slasconeProxy = new SampleProxy();
 
+          
+
             // ToDo
             var activatedLicense = await slasconeProxy.ActivateAsync("", "",
                 "", "", "");
@@ -54,7 +56,28 @@ namespace Slascone.Provisioning.Sample
             var analyticalHeartbeatResult = await slasconeProxy.AddAnalyticalHeartbeatAsync(analyticalHb);
 
             Console.WriteLine(analyticalHeartbeatResult);
-            
+
+            // ToDo
+            var usageHeartbeat = new UsageHeartbeatDto();
+            usageHeartbeat.UsageHeartbeat = new List<UsageFeatureValue>();
+            usageHeartbeat.DeviceLicenseKey = "";
+            usageHeartbeat.UniqueDeviceId = "";
+
+            var usageFeatureValue1 = new UsageFeatureValue();
+            usageFeatureValue1.UsageFeatureId = Guid.Parse("");
+            usageFeatureValue1.Value = "";
+
+            var usageFeatureValue2 = new UsageFeatureValue();
+            usageFeatureValue2.UsageFeatureId = Guid.Parse("");
+            usageFeatureValue2.Value = "";
+            usageHeartbeat.UsageHeartbeat.Add(usageFeatureValue1);
+            usageHeartbeat.UsageHeartbeat.Add(usageFeatureValue2);
+
+            var usageHeartbeatResult = await slasconeProxy.AddUsageHeartbeat(usageHeartbeat);
+
+            Console.WriteLine(usageHeartbeatResult);
+
+
             if (activatedLicense.LicenseInfo != null)
             {
                 // ToDo

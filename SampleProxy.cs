@@ -160,6 +160,32 @@ namespace Slascone.Provisioning.Sample
             throw new Exception(response.StatusCode.ToString());
         }
 
+        public async Task<string> AddUsageHeartbeat(UsageHeartbeatDto usageHeartbeatDto)
+        {
+            var uri = new UriBuilder(ApiBaseUrl)
+            {
+                Path =
+                    $"api/ProductAnalytics/isv/{IsvId}/usageHeartbeat"
+            };
+
+            var response = await _httpClient.PostAsync(uri.Uri, usageHeartbeatDto, new JsonMediaTypeFormatter());
+            var content = await response.Content.ReadAsStringAsync();
+
+            // If generating a analytical heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return content;
+            }
+            // If generating a analytical heartbeat was unsuccessful, the api returns a status code Conflict(409) with the information of a warning.
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                var errorInfo = JsonConvert.DeserializeObject<WarningInfo>(content);
+                return errorInfo.ErrorMessage;
+            }
+
+            throw new Exception(response.StatusCode.ToString());
+        }
+
         /// <summary>
         /// Unassign a activated license.
         /// </summary>
