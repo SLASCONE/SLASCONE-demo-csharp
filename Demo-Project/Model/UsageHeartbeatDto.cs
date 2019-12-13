@@ -6,6 +6,5 @@ namespace Slascone.Provisioning.Sample.Model
     {
         public string UniqueDeviceId { get; set; }
         public List<UsageFeatureValue> UsageHeartbeat { get; set; }
-        public string DeviceLicenseKey { get; set; } = null;
     }
 }
