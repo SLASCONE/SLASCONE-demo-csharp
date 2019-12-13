@@ -50,7 +50,6 @@ namespace Slascone.Provisioning.Sample
             // ToDo
             var analyticalHb = new AnalyticalHeartbeat();
             analyticalHb.AnalyticalHeartbeatInfo = new List<AnalyticalFieldValue>();
-            analyticalHb.DeviceLicenseKey = "";
             analyticalHb.UniqueDeviceId = "";
 
             var analyticalHeartbeatResult = await slasconeProxy.AddAnalyticalHeartbeatAsync(analyticalHb);
@@ -60,7 +59,6 @@ namespace Slascone.Provisioning.Sample
             // ToDo
             var usageHeartbeat = new UsageHeartbeatDto();
             usageHeartbeat.UsageHeartbeat = new List<UsageFeatureValue>();
-            usageHeartbeat.DeviceLicenseKey = "";
             usageHeartbeat.UniqueDeviceId = "";
 
             var usageFeatureValue1 = new UsageFeatureValue();
