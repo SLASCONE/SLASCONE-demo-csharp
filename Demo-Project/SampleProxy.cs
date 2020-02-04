@@ -200,7 +200,7 @@ namespace Slascone.Provisioning.Sample
         {
             var uri = new UriBuilder(ApiBaseUrl)
             {
-                Path = $"api/Provisioning/{IsvId}/devicelicensekey/{deviceLicenseKey}/unassign",
+                Path = $"api/Provisioning/isv/{IsvId}/devicelicensekey/{deviceLicenseKey}/unassign",
             };
 
             var response = await _httpClient.PostAsync(uri.Uri, null);
