@@ -4,7 +4,6 @@ using System.Net;
 using System.Text;
 using System.Management;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Slascone.Provisioning.Sample.Model;
@@ -34,30 +33,15 @@ namespace Slascone.Provisioning.Sample
         /// <summary>
         /// Activates a License
         /// </summary>
-        /// <param name="productId">Specifies the product which the license is aligned.</param>
-        /// <param name="deviceLicenseKey">Can be a DeviceLicenseKey, LicenseKey or LegacyLicenseKey.</param>
-        /// <param name="uniqueDeviceId">Is the id which identifies the device.</param>
-        /// <param name="deviceName">Is the name of a device.</param>
-        /// <param name="deviceDescription">Is a description for a device.</param>
         /// <returns>ProvisioningInfo where LicenseInfoDto or WarningInfoDto is set.</returns>
-        public async Task<ProvisioningInfo> ActivateAsync(string productId, string deviceLicenseKey, string uniqueDeviceId,
-            string deviceName, string deviceDescription)
+        public async Task<ProvisioningInfo> ActivateAsync(ActivateClientDto activateClientDto)
         { 
             var uri = new UriBuilder(ApiBaseUrl)
             {
-                Path = $"api/Provisioning/{IsvId}/devicelicense/activate",
+                Path = $"/api/v2/isv/{IsvId}/provisioning/activations",
             };
 
-            var bodyData = new
-            {
-                productId,
-                deviceLicenseKey,
-                uniqueDeviceId,
-                deviceName,
-                deviceDescription,
-            };
-
-            var bodyJson = JsonConvert.SerializeObject(bodyData);
+            var bodyJson = JsonConvert.SerializeObject(activateClientDto);
             var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(uri.Uri, body);
@@ -90,22 +74,19 @@ namespace Slascone.Provisioning.Sample
         /// <summary>
         /// Creates a heartbeat
         /// </summary>
-        /// <param name="productId">Specifies the product which the license is aligned.</param>
-        /// <param name="deviceLicenseKey">Can be a DeviceLicenseKey, LicenseKey or LegacyLicenseKey.</param>
-        /// <param name="softwareVersion">Is the software version which the license is currently assigned.</param>
-        /// <param name="operatingSystem">Is the operating system on which the license is currently assigned.</param>
-        /// <param name="uniqueDeviceId">Is the id which identifies the device.</param>
         /// <returns>ProvisioningInfo where LicenseInfoDto or WarningInfoDto is set.</returns>
-        public async Task<ProvisioningInfo> AddHeartbeatAsync(string productId, string deviceLicenseKey, string softwareVersion, string operatingSystem,
-            string uniqueDeviceId)
+        public async Task<ProvisioningInfo> AddHeartbeatAsync(AddHeartbeatDto heartbeatDto)
         {
             var uri = new UriBuilder(ApiBaseUrl)
             {
                 Path =
-                    $"api/Provisioning/isv/{IsvId}/productId/{productId}/softwareversion/{softwareVersion}/os/{operatingSystem}/deviceId/{uniqueDeviceId}",
+                    $"/api/v2/isv/{IsvId}/provisioning/heartbeats",
             };
 
-            var response = await _httpClient.PostAsync(uri.Uri, null);
+            var bodyJson = JsonConvert.SerializeObject(heartbeatDto);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(uri.Uri, body);
             var content = await response.Content.ReadAsStringAsync();
             
             // If generating a heartbeat was successful, the api returns a status code Ok(200) with the information of the license.
@@ -139,10 +120,13 @@ namespace Slascone.Provisioning.Sample
             var uri = new UriBuilder(ApiBaseUrl)
             {
                 Path =
-                    $"api/ProductAnalytics/isv/{IsvId}/analyticalHeartbeat"
+                    $"/api/v2/isv/{IsvId}/data-gathering/analytical-heartbeats"
             };
 
-            var response = await _httpClient.PostAsync(uri.Uri, analyticalHeartbeat, new JsonMediaTypeFormatter());
+            var bodyJson = JsonConvert.SerializeObject(analyticalHeartbeat);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(uri.Uri, body);
             var content = await response.Content.ReadAsStringAsync();
 
             // If generating a analytical heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".
@@ -154,7 +138,7 @@ namespace Slascone.Provisioning.Sample
             if (response.StatusCode == HttpStatusCode.Conflict)
             {
                 var errorInfo = JsonConvert.DeserializeObject<WarningInfo>(content);
-                return errorInfo.ErrorMessage;
+                return errorInfo.Message;
             }
 
             throw new Exception(response.StatusCode.ToString());
@@ -170,10 +154,13 @@ namespace Slascone.Provisioning.Sample
             var uri = new UriBuilder(ApiBaseUrl)
             {
                 Path =
-                    $"api/ProductAnalytics/isv/{IsvId}/usageHeartbeat"
+                    $"/api/v2/isv/{IsvId}/data-gathering/usage-heartbeats"
             };
 
-            var response = await _httpClient.PostAsync(uri.Uri, usageHeartbeatDto, new JsonMediaTypeFormatter());
+            var bodyJson = JsonConvert.SerializeObject(usageHeartbeatDto);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(uri.Uri, body);
             var content = await response.Content.ReadAsStringAsync();
 
             // If generating a analytical heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".
@@ -185,7 +172,7 @@ namespace Slascone.Provisioning.Sample
             if (response.StatusCode == HttpStatusCode.Conflict)
             {
                 var errorInfo = JsonConvert.DeserializeObject<WarningInfo>(content);
-                return errorInfo.ErrorMessage;
+                return errorInfo.Message;
             }
 
             throw new Exception(response.StatusCode.ToString());
@@ -194,16 +181,18 @@ namespace Slascone.Provisioning.Sample
         /// <summary>
         /// Unassign a activated license.
         /// </summary>
-        /// <param name="deviceLicenseKey">Is the key of the license assignment which you want to unassign.</param>
         /// <returns>"Successfully deactivated License." or a WarningInfoDto</returns>
-        public async Task<string> UnassignAsync(string deviceLicenseKey)
+        public async Task<string> UnassignAsync(UnassignDto unassignDto)
         {
             var uri = new UriBuilder(ApiBaseUrl)
             {
-                Path = $"api/Provisioning/isv/{IsvId}/devicelicensekey/{deviceLicenseKey}/unassign",
+                Path = $"/api/v2/isv/{IsvId}/provisioning/unassign",
             };
 
-            var response = await _httpClient.PostAsync(uri.Uri, null);
+            var bodyJson = JsonConvert.SerializeObject(unassignDto);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(uri.Uri, body);
             var content = await response.Content.ReadAsStringAsync();
 
             // If unassign was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".
@@ -216,7 +205,7 @@ namespace Slascone.Provisioning.Sample
             if (response.StatusCode == HttpStatusCode.Conflict)
             {
                 var errorInfo = JsonConvert.DeserializeObject<WarningInfo>(content);
-                return errorInfo.ErrorMessage;
+                return errorInfo.Message;
             }
 
             throw new Exception(response.StatusCode.ToString());
@@ -225,17 +214,19 @@ namespace Slascone.Provisioning.Sample
         /// <summary>
         /// Get the license info
         /// </summary>
-        /// <param name="deviceLicenseKey">Is the key of the license assignment where you want to get the depending license information.</param>
         /// <returns>LicenseInfo</returns>
-        public LicenseInfo GetLicenseInfo(string deviceLicenseKey)
+        public async Task<LicenseInfo> GetLicenseInfo(ValidateLicenseDto validateLicenseDto)
         {
             var uri = new UriBuilder(ApiBaseUrl)
             {
-                Path = $"api/Provisioning/isv/{IsvId}/devicelicensekey/{deviceLicenseKey}",
+                Path = $"/api/v2/isv/{IsvId}/provisioning/validate",
             };
 
-            var response = _httpClient.GetAsync(uri.Uri).Result;
-            var content = response.Content.ReadAsStringAsync().Result;
+            var bodyJson = JsonConvert.SerializeObject(validateLicenseDto);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(uri.Uri, body);
+            var content = await response.Content.ReadAsStringAsync();
 
             if (response.StatusCode == HttpStatusCode.OK)
             {

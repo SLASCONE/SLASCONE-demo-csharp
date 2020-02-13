@@ -1,20 +1,21 @@
 using System;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
 namespace Slascone.Provisioning.Sample.Model
 {
     public class Customer
     {
-        [JsonProperty("customerId")]
+        [DataMember]
+        [JsonProperty("customer-id")]
         public Guid CustomerId { get; set; }
 
-        [JsonProperty("isvId")]
-        public Guid IsvId { get; set; }
-
-        [JsonProperty("companyName")]
+        [DataMember]
+        [JsonProperty("company-name")]
         public string CompanyName { get; set; }
 
-        [JsonProperty("customerNumber")]
+        [DataMember]
+        [JsonProperty("customer-number")]
         public string CustomerNumber { get; set; }
     }
 }

@@ -1,63 +1,82 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
 namespace Slascone.Provisioning.Sample.Model
 {
     public class LicenseInfo
     {
-        [JsonProperty("licenseKey")]
+        [DataMember]
+        [JsonProperty("license-key")]
         public string LicenseKey { get; set; }
 
-        [JsonProperty("deviceLicenseKey")]
-        public Guid? DeviceLicenseKey { get; set; }
+        [DataMember]
+        [JsonProperty("token-key")]
+        public Guid? TokenKey { get; set; }
 
-        [JsonProperty("uniqueDeviceId")]
-        public string UniqueDeviceId { get; set; }
+        [DataMember]
+        [JsonProperty("client-id")]
+        public string ClientId { get; set; }
 
-        [JsonProperty("isLicenseValid")]
+        [DataMember]
+        [JsonProperty("is-license-valid")]
         public bool IsLicenseValid { get; set; }
 
-        [JsonProperty("isSoftwareVersionValid")]
+        [DataMember]
+        [JsonProperty("is-software-version-valid")]
         public bool IsSoftwareVersionValid { get; set; }
 
-        [JsonProperty("expirationDateUtc")]
+        [DataMember]
+        [JsonProperty("expiration-date-utc")]
         public DateTime ExpirationDateUtc { get; set; }
 
-        [JsonProperty("softwareReleaseLimitation")]
+        [DataMember]
+        [JsonProperty("software-release-limitation")]
         public SoftwareReleaseLimitation SoftwareReleaseLimitation { get; set; }
 
-        [JsonProperty("heartBeatPeriod")]
+        [DataMember]
+        [JsonProperty("heartbeat-period")]
         public int? HeartBeatPeriod { get; set; }
 
-        [JsonProperty("freeRide")]
+        [DataMember]
+        [JsonProperty("freeride")]
         public int? FreeRide { get; set; }
 
-        [JsonProperty("productName")]
+        [DataMember]
+        [JsonProperty("product-name")]
         public string ProductName { get; set; }
 
-        [JsonProperty("templateName")]
+        [DataMember]
+        [JsonProperty("template-name")]
         public string TemplateName { get; set; }
 
-        [JsonProperty("licenseName")]
+        [DataMember]
+        [JsonProperty("license-name")]
         public string LicenseName { get; set; }
 
-        [JsonProperty("deviceDescription")]
-        public string DeviceDescription { get; set; }
+        [DataMember]
+        [JsonProperty("client-description")]
+        public string ClientDescription { get; set; }
 
-        [JsonProperty("enforceSoftwareVersionUpgrade")]
+        [DataMember]
+        [JsonProperty("enforce-software-version-upgrade")]
         public bool EnforceSoftwareVersionUpgrade { get; set; }
 
+        [DataMember]
         [JsonProperty("customer")]
-        public Customer Customer { get; set; } = new Customer();
+        public Customer Customer { get; set; }
 
+        [DataMember]
         [JsonProperty("features")]
-        public IList<LicenseFeature> Features { get; set; } = new List<LicenseFeature>();
+        public List<LicenseFeature> Features { get; set; } = new List<LicenseFeature>();
 
+        [DataMember]
         [JsonProperty("limitations")]
-        public IList<LicenseLimitation> Limitations { get; set; } = new List<LicenseLimitation>();
+        public List<LicenseLimitation> Limitations { get; set; } = new List<LicenseLimitation>();
 
+        [DataMember]
         [JsonProperty("variables")]
-        public IList<LicenseVariable> Variables { get; set; } = new List<LicenseVariable>();
+        public List<LicenseVariable> Variables { get; set; } = new List<LicenseVariable>();
     }
 }

@@ -7,7 +7,7 @@ namespace Slascone.Provisioning.Sample.Model
         [JsonProperty("id")]
         public int Id { get; set; }
 
-        [JsonProperty("errorMessage")]
-        public string ErrorMessage { get; set; }
+        [JsonProperty("message")]
+        public string Message { get; set; }
     }
 }

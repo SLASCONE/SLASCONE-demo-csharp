@@ -19,15 +19,22 @@ namespace Slascone.Provisioning.Sample
 
             var slasconeProxy = new SampleProxy();
 
-          
+            //ToDo
+            var activateClientDto = new ActivateClientDto
+            {
+                ClientDescription = "",
+                ClientId = "",
+                ClientName = "",
+                LicenseKey = "",
+                ProductId = Guid.Parse(""),
+                SoftwareVersion = ""
+            };
 
-            // ToDo
-            var activatedLicense = await slasconeProxy.ActivateAsync("", "",
-                "", "", "");
+            var activatedLicense = await slasconeProxy.ActivateAsync(activateClientDto);
 
             if (activatedLicense.LicenseInfo == null)
             {
-                Console.WriteLine(activatedLicense.WarningInfo.ErrorMessage);
+                Console.WriteLine(activatedLicense.WarningInfo.Message);
             }
             else
             {
@@ -35,12 +42,22 @@ namespace Slascone.Provisioning.Sample
             }
 
             // ToDo
-            var heartbeatResult = await slasconeProxy.AddHeartbeatAsync("", "",
-                "", "", "");
+            var heartbeatDto = new AddHeartbeatDto
+            {
+                TokenKey = "",
+                ProductId = Guid.Parse(""),
+                ClientId = "",
+                SoftwareVersion = "",
+                GroupId = "",
+                HeartbeatTypeId = Guid.Parse(""),
+                OperatingSystem = ""
+            };
+
+            var heartbeatResult = await slasconeProxy.AddHeartbeatAsync(heartbeatDto);
 
             if (heartbeatResult.LicenseInfo == null)
             {
-                Console.WriteLine(heartbeatResult.WarningInfo.ErrorMessage);
+                Console.WriteLine(heartbeatResult.WarningInfo.Message);
             }
             else
             {
@@ -49,8 +66,8 @@ namespace Slascone.Provisioning.Sample
 
             // ToDo
             var analyticalHb = new AnalyticalHeartbeat();
-            analyticalHb.AnalyticalHeartbeatInfo = new List<AnalyticalFieldValue>();
-            analyticalHb.UniqueDeviceId = "";
+            analyticalHb.Heartbeat = new List<AnalyticalFieldValue>();
+            analyticalHb.ClientId = "";
 
             var analyticalHeartbeatResult = await slasconeProxy.AddAnalyticalHeartbeatAsync(analyticalHb);
 
@@ -58,14 +75,14 @@ namespace Slascone.Provisioning.Sample
 
             // ToDo
             var usageHeartbeat = new UsageHeartbeatDto();
-            usageHeartbeat.UsageHeartbeat = new List<UsageFeatureValue>();
-            usageHeartbeat.UniqueDeviceId = "";
+            usageHeartbeat.UsageHeartbeat = new List<UsageHeartbeatValue>();
+            usageHeartbeat.ClientId = "";
 
-            var usageFeatureValue1 = new UsageFeatureValue();
+            var usageFeatureValue1 = new UsageHeartbeatValue();
             usageFeatureValue1.UsageFeatureId = Guid.Parse("");
             usageFeatureValue1.Value = "";
 
-            var usageFeatureValue2 = new UsageFeatureValue();
+            var usageFeatureValue2 = new UsageHeartbeatValue();
             usageFeatureValue2.UsageFeatureId = Guid.Parse("");
             usageFeatureValue2.Value = "";
             usageHeartbeat.UsageHeartbeat.Add(usageFeatureValue1);
@@ -79,7 +96,12 @@ namespace Slascone.Provisioning.Sample
             if (activatedLicense.LicenseInfo != null)
             {
                 // ToDo
-                var unassignResult = await slasconeProxy.UnassignAsync(activatedLicense.LicenseInfo.DeviceLicenseKey.ToString());
+                var unassignDto = new UnassignDto
+                {
+                    TokenKey = ""
+                };
+
+                var unassignResult = await slasconeProxy.UnassignAsync(unassignDto);
 
                 Console.WriteLine(unassignResult);
             }
