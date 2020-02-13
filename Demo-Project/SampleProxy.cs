@@ -225,7 +225,14 @@ namespace Slascone.Provisioning.Sample
             var bodyJson = JsonConvert.SerializeObject(validateLicenseDto);
             var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(uri.Uri, body);
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = uri.Uri,
+                Content = body
+            };
+
+            var response = await _httpClient.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
 
             if (response.StatusCode == HttpStatusCode.OK)
