@@ -11,11 +11,11 @@ namespace Slascone.Provisioning.Sample.Model
         public Guid Id { get; set; }
 
         [DataMember]
-        [JsonProperty("product-id")]
+        [JsonProperty("product_id")]
         public Guid ProductId { get; set; }
 
         [DataMember]
-        [JsonProperty("software-release")]
+        [JsonProperty("software_release")]
         public string SoftwareRelease { get; set; }
 
         [DataMember]

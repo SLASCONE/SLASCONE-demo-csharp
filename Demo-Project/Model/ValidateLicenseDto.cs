@@ -11,7 +11,7 @@ namespace Slascone.Provisioning.Sample.Model
     {
         [DataMember]
         [Required]
-        [JsonProperty("license-key")]
+        [JsonProperty("license_key")]
         public string LicenseKey { get; set; }
     }
 }

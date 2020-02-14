@@ -8,35 +8,35 @@ namespace Slascone.Provisioning.Sample.Model
     public class LicenseInfo
     {
         [DataMember]
-        [JsonProperty("license-key")]
+        [JsonProperty("license_key")]
         public string LicenseKey { get; set; }
 
         [DataMember]
-        [JsonProperty("token-key")]
+        [JsonProperty("token_key")]
         public Guid? TokenKey { get; set; }
 
         [DataMember]
-        [JsonProperty("client-id")]
+        [JsonProperty("client_id")]
         public string ClientId { get; set; }
 
         [DataMember]
-        [JsonProperty("is-license-valid")]
+        [JsonProperty("is_license_valid")]
         public bool IsLicenseValid { get; set; }
 
         [DataMember]
-        [JsonProperty("is-software-version-valid")]
+        [JsonProperty("is_software_version_valid")]
         public bool IsSoftwareVersionValid { get; set; }
 
         [DataMember]
-        [JsonProperty("expiration-date-utc")]
+        [JsonProperty("expiration_date_utc")]
         public DateTime ExpirationDateUtc { get; set; }
 
         [DataMember]
-        [JsonProperty("software-release-limitation")]
+        [JsonProperty("software_release_limitation")]
         public SoftwareReleaseLimitation SoftwareReleaseLimitation { get; set; }
 
         [DataMember]
-        [JsonProperty("heartbeat-period")]
+        [JsonProperty("heartbeat_period")]
         public int? HeartBeatPeriod { get; set; }
 
         [DataMember]
@@ -44,23 +44,23 @@ namespace Slascone.Provisioning.Sample.Model
         public int? FreeRide { get; set; }
 
         [DataMember]
-        [JsonProperty("product-name")]
+        [JsonProperty("product_name")]
         public string ProductName { get; set; }
 
         [DataMember]
-        [JsonProperty("template-name")]
+        [JsonProperty("template_name")]
         public string TemplateName { get; set; }
 
         [DataMember]
-        [JsonProperty("license-name")]
+        [JsonProperty("license_name")]
         public string LicenseName { get; set; }
 
         [DataMember]
-        [JsonProperty("client-description")]
+        [JsonProperty("client_description")]
         public string ClientDescription { get; set; }
 
         [DataMember]
-        [JsonProperty("enforce-software-version-upgrade")]
+        [JsonProperty("enforce_software_version_upgrade")]
         public bool EnforceSoftwareVersionUpgrade { get; set; }
 
         [DataMember]

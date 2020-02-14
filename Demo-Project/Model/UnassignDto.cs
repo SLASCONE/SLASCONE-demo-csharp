@@ -11,7 +11,7 @@ namespace Slascone.Provisioning.Sample.Model
     {
         [DataMember]
         [Required]
-        [JsonProperty("token-key")]
+        [JsonProperty("token_key")]
         public string TokenKey { get; set; }
     }
 }

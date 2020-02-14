@@ -120,7 +120,7 @@ namespace Slascone.Provisioning.Sample
             var uri = new UriBuilder(ApiBaseUrl)
             {
                 Path =
-                    $"/api/v2/isv/{IsvId}/data-gathering/analytical-heartbeats"
+                    $"/api/v2/isv/{IsvId}/data_gathering/analytical_heartbeats"
             };
 
             var bodyJson = JsonConvert.SerializeObject(analyticalHeartbeat);
@@ -154,7 +154,7 @@ namespace Slascone.Provisioning.Sample
             var uri = new UriBuilder(ApiBaseUrl)
             {
                 Path =
-                    $"/api/v2/isv/{IsvId}/data-gathering/usage-heartbeats"
+                    $"/api/v2/isv/{IsvId}/data_gathering/usage_heartbeats"
             };
 
             var bodyJson = JsonConvert.SerializeObject(usageHeartbeatDto);

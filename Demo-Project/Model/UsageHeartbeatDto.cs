@@ -7,15 +7,15 @@ namespace Slascone.Provisioning.Sample.Model
     public class UsageHeartbeatDto
     {
         [DataMember]
-        [JsonProperty("client-id")]
+        [JsonProperty("client_id")]
         public string ClientId { get; set; }
 
         [DataMember]
-        [JsonProperty("usage-heartbeat")]
+        [JsonProperty("usage_heartbeat")]
         public List<UsageHeartbeatValue> UsageHeartbeat { get; set; }
 
         [DataMember]
-        [JsonProperty("token-key")]
+        [JsonProperty("token_key")]
         public string TokenKey { get; set; } = null;
     }
 }

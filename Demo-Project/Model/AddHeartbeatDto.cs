@@ -11,32 +11,32 @@ namespace Slascone.Provisioning.Sample.Model
     {
         [DataMember]
         [Required]
-        [JsonProperty("product-id")]
+        [JsonProperty("product_id")]
         public Guid ProductId { get; set; }
 
         [DataMember]
         [Required]
-        [JsonProperty("client-id")]
+        [JsonProperty("client_id")]
         public string ClientId { get; set; }
 
         [DataMember]
-        [JsonProperty("software-version")]
+        [JsonProperty("software_version")]
         public string SoftwareVersion { get; set; }
 
         [DataMember]
-        [JsonProperty("operating-system")]
+        [JsonProperty("operating_system")]
         public string OperatingSystem { get; set; }
 
         [DataMember]
-        [JsonProperty("token-key")]
+        [JsonProperty("token_key")]
         public string TokenKey { get; set; }
 
         [DataMember]
-        [JsonProperty("group-id")]
+        [JsonProperty("group_id")]
         public string GroupId { get; set; }
 
         [DataMember]
-        [JsonProperty("heartbeat-type-id")]
+        [JsonProperty("heartbeat_type_id")]
         public Guid? HeartbeatTypeId { get; set; }
     }
 }

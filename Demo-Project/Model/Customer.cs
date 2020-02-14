@@ -7,15 +7,15 @@ namespace Slascone.Provisioning.Sample.Model
     public class Customer
     {
         [DataMember]
-        [JsonProperty("customer-id")]
+        [JsonProperty("customer_id")]
         public Guid CustomerId { get; set; }
 
         [DataMember]
-        [JsonProperty("company-name")]
+        [JsonProperty("company_name")]
         public string CompanyName { get; set; }
 
         [DataMember]
-        [JsonProperty("customer-number")]
+        [JsonProperty("customer_number")]
         public string CustomerNumber { get; set; }
     }
 }
