@@ -7,7 +7,7 @@ namespace Slascone.Provisioning.Sample.Model
     public class AnalyticalFieldValue
     {
         [DataMember]
-        [JsonProperty("analytical-field-id")]
+        [JsonProperty("analytical_field_id")]
         public Guid AnalyitcalFieldId { get; set; }
 
         [DataMember]

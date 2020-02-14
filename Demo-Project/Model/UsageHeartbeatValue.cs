@@ -9,11 +9,11 @@ namespace Slascone.Provisioning.Sample.Model
     public class UsageHeartbeatValue
     {
         [DataMember]
-        [JsonProperty("usage-feature-id")]
+        [JsonProperty("usage_feature_id")]
         public Guid UsageFeatureId { get; set; }
 
         [DataMember]
-        [JsonProperty("usage-module-id")]
+        [JsonProperty("usage_module_id")]
         public Guid? UsageModuleId { get; set; }
 
         [DataMember]
