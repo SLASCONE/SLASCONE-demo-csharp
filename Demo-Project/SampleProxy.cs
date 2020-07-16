@@ -1,13 +1,13 @@
 using System;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Management;
+using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Slascone.Provisioning.Sample.Model;
-
 
 namespace Slascone.Provisioning.Sample
 {
@@ -21,6 +21,7 @@ namespace Slascone.Provisioning.Sample
         private const string ApiBaseUrl = "https://api.slascone.com";
         private const string ProvisioningKey = "";
         private const string IsvId = "";
+        private const string SignatureKey = "";
 
         private readonly HttpClient _httpClient = new HttpClient();
 
@@ -38,7 +39,7 @@ namespace Slascone.Provisioning.Sample
         { 
             var uri = new UriBuilder(ApiBaseUrl)
             {
-                Path = $"/api/v2/isv/{IsvId}/provisioning/activations",
+                Path = $"/api/v2/isv/{IsvId}/provisioning/activations"
             };
 
             var bodyJson = JsonConvert.SerializeObject(activateClientDto);
@@ -46,6 +47,11 @@ namespace Slascone.Provisioning.Sample
 
             var response = await _httpClient.PostAsync(uri.Uri, body);
             var content = await response.Content.ReadAsStringAsync();
+
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
 
             // If activation was successful, the api returns a status code Ok(200) with the information of the license.
             if (response.StatusCode == HttpStatusCode.OK)
@@ -80,7 +86,7 @@ namespace Slascone.Provisioning.Sample
             var uri = new UriBuilder(ApiBaseUrl)
             {
                 Path =
-                    $"/api/v2/isv/{IsvId}/provisioning/heartbeats",
+                    $"/api/v2/isv/{IsvId}/provisioning/heartbeats"
             };
 
             var bodyJson = JsonConvert.SerializeObject(heartbeatDto);
@@ -88,7 +94,12 @@ namespace Slascone.Provisioning.Sample
 
             var response = await _httpClient.PostAsync(uri.Uri, body);
             var content = await response.Content.ReadAsStringAsync();
-            
+
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
+
             // If generating a heartbeat was successful, the api returns a status code Ok(200) with the information of the license.
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -129,6 +140,11 @@ namespace Slascone.Provisioning.Sample
             var response = await _httpClient.PostAsync(uri.Uri, body);
             var content = await response.Content.ReadAsStringAsync();
 
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
+
             // If generating a analytical heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -163,6 +179,11 @@ namespace Slascone.Provisioning.Sample
             var response = await _httpClient.PostAsync(uri.Uri, body);
             var content = await response.Content.ReadAsStringAsync();
 
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
+
             // If generating a analytical heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -186,7 +207,7 @@ namespace Slascone.Provisioning.Sample
         {
             var uri = new UriBuilder(ApiBaseUrl)
             {
-                Path = $"/api/v2/isv/{IsvId}/provisioning/unassign",
+                Path = $"/api/v2/isv/{IsvId}/provisioning/unassign"
             };
 
             var bodyJson = JsonConvert.SerializeObject(unassignDto);
@@ -194,6 +215,11 @@ namespace Slascone.Provisioning.Sample
 
             var response = await _httpClient.PostAsync(uri.Uri, body);
             var content = await response.Content.ReadAsStringAsync();
+
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
 
             // If unassign was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".
             if (response.StatusCode == HttpStatusCode.OK)
@@ -219,7 +245,7 @@ namespace Slascone.Provisioning.Sample
         {
             var uri = new UriBuilder(ApiBaseUrl)
             {
-                Path = $"/api/v2/isv/{IsvId}/provisioning/validate",
+                Path = $"/api/v2/isv/{IsvId}/provisioning/validate"
             };
 
             var bodyJson = JsonConvert.SerializeObject(validateLicenseDto);
@@ -234,6 +260,11 @@ namespace Slascone.Provisioning.Sample
 
             var response = await _httpClient.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();
+
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -257,6 +288,29 @@ namespace Slascone.Provisioning.Sample
 
                 return uuid;
             }
+        }
+
+        /// <summary>
+        /// Validates the authority by signature
+        /// </summary>
+        /// <returns>True if Signature is valid. False if Signature is invalid.</returns>
+        private async Task<bool> IsSignatureValid(HttpResponseMessage response)
+        {
+            var responseStream = await response.Content.ReadAsByteArrayAsync();
+
+            var hmac = new HMACSHA256();
+            hmac.Key = Encoding.UTF8.GetBytes(SignatureKey);
+
+            var hash = hmac.ComputeHash(responseStream);
+            var hashString = BitConverter.ToString(hash).Replace("-", "");
+
+            if (response.Headers.GetValues("x-slascone-signature").FirstOrDefault().Equals(hashString))
+            {
+                return true;
+            }
+
+            return false;
+
         }
     }
 }
