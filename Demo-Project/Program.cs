@@ -105,6 +105,25 @@ namespace Slascone.Provisioning.Sample
 
                 Console.WriteLine(unassignResult);
             }
+
+            //ToDo
+            var consumptionHeartbeat = new ConsumptionHeartbeatDto();
+            consumptionHeartbeat.ClientId = "";
+            consumptionHeartbeat.ConsumptionHeartbeat = new List<ConsumptionHeartbeatValueDto>();
+            consumptionHeartbeat.TokenKey = Guid.Parse("");
+
+            var consumptionHeartbeatValue1 = new ConsumptionHeartbeatValueDto();
+            consumptionHeartbeatValue1.LimitationId = Guid.Parse("");
+            consumptionHeartbeatValue1.Value = 1;
+            consumptionHeartbeatValue1.LimitationId = Guid.Parse("");
+            consumptionHeartbeat.ConsumptionHeartbeat.Add(consumptionHeartbeatValue1);
+
+            var consumptionHeartbeatResult = await slasconeProxy.AddConsumptionHeartbeat(consumptionHeartbeat);
+
+            Console.WriteLine(consumptionHeartbeatResult);
+
+            var remainingConsumptions = await slasconeProxy.GetConsumptionStatus(new ValidateConsumptionStatusDto
+                {LimitationId = Guid.Parse(""), ClientId = ""});
         }
     }
 }

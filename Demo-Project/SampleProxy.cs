@@ -184,12 +184,51 @@ namespace Slascone.Provisioning.Sample
                 throw new Exception("Signature is not valid!.");
             }
 
-            // If generating a analytical heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".
+            // If generating a usage heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created usage heartbeat.".
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 return content;
             }
-            // If generating a analytical heartbeat was unsuccessful, the api returns a status code Conflict(409) with the information of a warning.
+            // If generating a usage heartbeat was unsuccessful, the api returns a status code Conflict(409) with the information of a warning.
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                var errorInfo = JsonConvert.DeserializeObject<WarningInfo>(content);
+                return errorInfo.Message;
+            }
+
+            throw new Exception(response.StatusCode.ToString());
+        }
+
+        /// <summary>
+        /// Creates a consumption heartbeat
+        /// </summary>
+        /// <param name="consumptionHeartbeatDto">Is the object which contains all consumption Heartbeat Information.</param>
+        /// <returns>"Successfully created consumption heartbeat." or a WarningInfoDto</returns>
+        public async Task<string> AddConsumptionHeartbeat(ConsumptionHeartbeatDto consumptionHeartbeatDto)
+        {
+            var uri = new UriBuilder(ApiBaseUrl)
+            {
+                Path =
+                    $"/api/v2/isv/{IsvId}/data_gathering/consumption_heartbeats"
+            };
+
+            var bodyJson = JsonConvert.SerializeObject(consumptionHeartbeatDto);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(uri.Uri, body);
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
+
+            // If generating a consumption heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created consumption heartbeat.".
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return content;
+            }
+            // If generating a usage heartbeat was unsuccessful, the api returns a status code Conflict(409) with the information of a warning.
             if (response.StatusCode == HttpStatusCode.Conflict)
             {
                 var errorInfo = JsonConvert.DeserializeObject<WarningInfo>(content);
@@ -221,7 +260,7 @@ namespace Slascone.Provisioning.Sample
                 throw new Exception("Signature is not valid!.");
             }
 
-            // If unassign was successful, the api returns a status code Ok(200) with the message "Successfully created analytical heartbeat.".
+            // If unassign was successful, the api returns a status code Ok(200)".
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 return content;
@@ -271,6 +310,37 @@ namespace Slascone.Provisioning.Sample
                 return JsonConvert.DeserializeObject<LicenseInfo>(content);
             }
             
+            throw new Exception(response.StatusCode.ToString());
+        }
+
+
+        /// <summary>
+        /// Get the consumption status of an limitation per assignment
+        /// </summary>
+        /// <returns>Remaining Consumption Value</returns>
+        public async Task<string> GetConsumptionStatus(ValidateConsumptionStatusDto validateConsumptionDto)
+        {
+            var uri = new UriBuilder(ApiBaseUrl)
+            {
+                Path = $"/api/v2/isv/{IsvId}/provisioning/validate/consumption"
+            };
+
+            var bodyJson = JsonConvert.SerializeObject(validateConsumptionDto);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.PostAsync(uri.Uri, body);
+            var content = await response.Content.ReadAsStringAsync();
+      
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return content;
+            }
+
             throw new Exception(response.StatusCode.ToString());
         }
 
