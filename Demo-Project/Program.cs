@@ -41,6 +41,67 @@ namespace Slascone.Provisioning.Sample
                 Console.WriteLine("Successfully activated license.");
             }
 
+            // Todo: Uncomment specific scenario
+            //await HeartbeatSample(activatedLicense);
+            //await FloatingLicensingSample(activatedLicense);
+
+        }
+
+        private static async Task FloatingLicensingSample(ProvisioningInfo activatedLicense)
+        {
+            var slasconeProxy = new SampleProxy();
+
+            // ToDo
+            var heartbeatDto = new AddHeartbeatDto
+            {
+                TokenKey = "",
+                ProductId = Guid.Parse(""),
+                ClientId = "",
+                SoftwareVersion = "",
+                GroupId = "",
+                HeartbeatTypeId = Guid.Parse(""),
+                OperatingSystem = ""
+            };
+
+            var heartbeatResult = await slasconeProxy.AddHeartbeatAsync(heartbeatDto);
+
+            if (heartbeatResult.LicenseInfo == null)
+            {
+                Console.WriteLine(heartbeatResult.WarningInfo.Message);
+            }
+            else
+            {
+                if (heartbeatResult.LicenseInfo.ProvisioningMode == ProvisioningMode.Floating)
+                {
+                    // ToDo
+                    var sessionDto = new SessionDto
+                    {
+                        ClientId = "",
+                        LicenseId = Guid.Parse("")
+                    };
+
+                    var openSessionResult = await slasconeProxy.OpenSession(sessionDto);
+
+                    if (openSessionResult.SessionViolationInfo == null)
+                    {
+                        Console.WriteLine(openSessionResult.WarningInfo.Message);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Session active until: " + openSessionResult.SessionViolationInfo.SessionValidUntil);
+                    }
+
+                    var closeSessionResult = await slasconeProxy.CloseSession(sessionDto);
+
+                    Console.WriteLine(closeSessionResult);
+                }
+            }
+        }
+
+        private static async Task HeartbeatSample(ProvisioningInfo activatedLicense)
+        {
+            var slasconeProxy = new SampleProxy();
+
             // ToDo
             var heartbeatDto = new AddHeartbeatDto
             {
@@ -123,7 +184,8 @@ namespace Slascone.Provisioning.Sample
             Console.WriteLine(consumptionHeartbeatResult);
 
             var remainingConsumptions = await slasconeProxy.GetConsumptionStatus(new ValidateConsumptionStatusDto
-                {LimitationId = Guid.Parse(""), ClientId = ""});
+            { LimitationId = Guid.Parse(""), ClientId = "" });
         }
+
     }
 }

@@ -30,13 +30,16 @@ namespace Slascone.Provisioning.Sample
             _httpClient.DefaultRequestHeaders.Add("ProvisioningKey", ProvisioningKey);
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
- 
+
+
+        #region Activate/Unassign
+
         /// <summary>
         /// Activates a License
         /// </summary>
         /// <returns>ProvisioningInfo where LicenseInfoDto or WarningInfoDto is set.</returns>
         public async Task<ProvisioningInfo> ActivateAsync(ActivateClientDto activateClientDto)
-        { 
+        {
             var uri = new UriBuilder(ApiBaseUrl)
             {
                 Path = $"/api/v2/isv/{IsvId}/provisioning/activations"
@@ -74,6 +77,48 @@ namespace Slascone.Provisioning.Sample
             throw new Exception(response.StatusCode.ToString());
         }
 
+
+        /// <summary>
+        /// Unassign a activated license.
+        /// </summary>
+        /// <returns>"Successfully deactivated License." or a WarningInfoDto</returns>
+        public async Task<string> UnassignAsync(UnassignDto unassignDto)
+        {
+            var uri = new UriBuilder(ApiBaseUrl)
+            {
+                Path = $"/api/v2/isv/{IsvId}/provisioning/unassign"
+            };
+
+            var bodyJson = JsonConvert.SerializeObject(unassignDto);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(uri.Uri, body);
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
+
+            // If unassign was successful, the api returns a status code Ok(200)".
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return content;
+            }
+
+            // If unassign was unsuccessful, the api returns a status code Conflict(409) with the information of a warning.
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                var errorInfo = JsonConvert.DeserializeObject<WarningInfo>(content);
+                return errorInfo.Message;
+            }
+
+            throw new Exception(response.StatusCode.ToString());
+        }
+
+        #endregion
+
+        #region Heartbeats(Normal,Analytical,Usage)
 
         // Creates a heartbeat
         // Response is either a LicenseInfoDto or a WarningInfoDto
@@ -199,10 +244,14 @@ namespace Slascone.Provisioning.Sample
             throw new Exception(response.StatusCode.ToString());
         }
 
+        #endregion
+
+        #region Consumption Mode
+
         /// <summary>
         /// Creates a consumption heartbeat
         /// </summary>
-        /// <param name="consumptionHeartbeatDto">Is the object which contains all consumption Heartbeat Information.</param>
+        /// <param name="consumptionHeartbeatDtoDto">Is the object which contains all consumption Heartbeat Information.</param>
         /// <returns>"Successfully created consumption heartbeat." or a WarningInfoDto</returns>
         public async Task<string> AddConsumptionHeartbeat(ConsumptionHeartbeatDto consumptionHeartbeatDto)
         {
@@ -239,17 +288,17 @@ namespace Slascone.Provisioning.Sample
         }
 
         /// <summary>
-        /// Unassign a activated license.
+        /// Get the consumption status of an limitation per assignment
         /// </summary>
-        /// <returns>"Successfully deactivated License." or a WarningInfoDto</returns>
-        public async Task<string> UnassignAsync(UnassignDto unassignDto)
+        /// <returns>Remaining Consumption Value</returns>
+        public async Task<string> GetConsumptionStatus(ValidateConsumptionStatusDto validateConsumptionDto)
         {
             var uri = new UriBuilder(ApiBaseUrl)
             {
-                Path = $"/api/v2/isv/{IsvId}/provisioning/unassign"
+                Path = $"/api/v2/isv/{IsvId}/provisioning/validate/consumption"
             };
 
-            var bodyJson = JsonConvert.SerializeObject(unassignDto);
+            var bodyJson = JsonConvert.SerializeObject(validateConsumptionDto);
             var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(uri.Uri, body);
@@ -260,13 +309,91 @@ namespace Slascone.Provisioning.Sample
                 throw new Exception("Signature is not valid!.");
             }
 
-            // If unassign was successful, the api returns a status code Ok(200)".
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 return content;
             }
 
-            // If unassign was unsuccessful, the api returns a status code Conflict(409) with the information of a warning.
+            throw new Exception(response.StatusCode.ToString());
+        }
+
+
+        #endregion
+
+        #region Floating Licensing
+
+        /// <summary>
+        /// Opens a session
+        /// </summary>
+        /// <param name="sessionDto">Is the object which contains all information to open a session.</param>
+        /// <returns>SessionInfo</returns>
+        public async Task<SessionInfo> OpenSession(SessionDto sessionDto)
+        {
+            var uri = new UriBuilder(ApiBaseUrl)
+            {
+                Path = $"/api/v2/isv/{IsvId}/provisioning/session/open"
+            };
+
+            var bodyJson = JsonConvert.SerializeObject(sessionDto);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(uri.Uri, body);
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
+
+            // If activation was successful, the api returns a status code Ok(200) with the information of the license.
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var resultSessionInfo = new SessionInfo();
+                resultSessionInfo.WarningInfo = null;
+                resultSessionInfo.SessionViolationInfo = JsonConvert.DeserializeObject<SessionViolationInfo>(content);
+                return resultSessionInfo;
+            }
+
+            // If activation was unsuccessful, the api returns a status code Conflict(409) with the information of a warning.
+            if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                var resultSessionInfo = new SessionInfo();
+                resultSessionInfo.WarningInfo = JsonConvert.DeserializeObject<WarningInfo>(content);
+                resultSessionInfo.SessionViolationInfo = null;
+                return resultSessionInfo;
+            }
+
+            throw new Exception(response.StatusCode.ToString());
+        }
+
+        /// <summary>
+        /// Opens a session
+        /// </summary>
+        /// <param name="sessionDto">Is the object which contains all information to close a session.</param>
+        /// <returns>"Success." or a WarningInfoDto</returns>
+        public async Task<string> CloseSession(SessionDto sessionDto)
+        {
+            var uri = new UriBuilder(ApiBaseUrl)
+            {
+                Path = $"/api/v2/isv/{IsvId}/provisioning/session/close"
+            };
+            var bodyJson = JsonConvert.SerializeObject(sessionDto);
+            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(uri.Uri, body);
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!await IsSignatureValid(response))
+            {
+                throw new Exception("Signature is not valid!.");
+            }
+
+            // If generating a consumption heartbeat was successful, the api returns a status code Ok(200) with the message "Successfully created consumption heartbeat.".
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return content;
+            }
+            // If generating a usage heartbeat was unsuccessful, the api returns a status code Conflict(409) with the information of a warning.
             if (response.StatusCode == HttpStatusCode.Conflict)
             {
                 var errorInfo = JsonConvert.DeserializeObject<WarningInfo>(content);
@@ -275,6 +402,9 @@ namespace Slascone.Provisioning.Sample
 
             throw new Exception(response.StatusCode.ToString());
         }
+
+        #endregion
+
 
         /// <summary>
         /// Get the license info
@@ -313,36 +443,6 @@ namespace Slascone.Provisioning.Sample
             throw new Exception(response.StatusCode.ToString());
         }
 
-
-        /// <summary>
-        /// Get the consumption status of an limitation per assignment
-        /// </summary>
-        /// <returns>Remaining Consumption Value</returns>
-        public async Task<string> GetConsumptionStatus(ValidateConsumptionStatusDto validateConsumptionDto)
-        {
-            var uri = new UriBuilder(ApiBaseUrl)
-            {
-                Path = $"/api/v2/isv/{IsvId}/provisioning/validate/consumption"
-            };
-
-            var bodyJson = JsonConvert.SerializeObject(validateConsumptionDto);
-            var body = new StringContent(bodyJson, Encoding.UTF8, "application/json");
-            
-            var response = await _httpClient.PostAsync(uri.Uri, body);
-            var content = await response.Content.ReadAsStringAsync();
-      
-            if (!await IsSignatureValid(response))
-            {
-                throw new Exception("Signature is not valid!.");
-            }
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                return content;
-            }
-
-            throw new Exception(response.StatusCode.ToString());
-        }
 
         /// <summary>
         /// Get a unique device id based on the system

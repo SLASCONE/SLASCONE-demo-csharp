@@ -16,6 +16,18 @@ namespace Slascone.Provisioning.Sample.Model
         public Guid? TokenKey { get; set; }
 
         [DataMember]
+        [JsonProperty("legacy_license_key")]
+        public string LegacyLicenseKey { get; set; }
+
+        [DataMember]
+        [JsonProperty("subscription_key")]
+        public string SubscriptionKey { get; set; }
+
+        [DataMember]
+        [JsonProperty("provisioning_mode")]
+        public ProvisioningMode ProvisioningMode { get; set; }
+
+        [DataMember]
         [JsonProperty("client_id")]
         public string ClientId { get; set; }
 
@@ -78,5 +90,11 @@ namespace Slascone.Provisioning.Sample.Model
         [DataMember]
         [JsonProperty("variables")]
         public List<LicenseVariable> Variables { get; set; } = new List<LicenseVariable>();
+    }
+
+    public enum ProvisioningMode
+    {
+        Named = 0,
+        Floating = 1
     }
 }
