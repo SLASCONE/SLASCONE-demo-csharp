@@ -19,7 +19,7 @@ namespace Slascone.Provisioning.Sample
 
             var slasconeProxy = new SampleProxy();
 
-            //ToDo
+            //ToDo: Fill the variables
             var activateClientDto = new ActivateClientDto
             {
                 ClientDescription = "",
@@ -42,7 +42,7 @@ namespace Slascone.Provisioning.Sample
                 Console.WriteLine("Successfully activated license.");
             }
 
-            // Todo: Uncomment specific scenario
+            // ToDo: Uncomment specific scenario
             //await HeartbeatSample(activatedLicense);
             //await FloatingLicensingSample(activatedLicense);
 
@@ -52,7 +52,7 @@ namespace Slascone.Provisioning.Sample
         {
             var slasconeProxy = new SampleProxy();
 
-            // ToDo
+            // ToDo: Fill the variables
             var heartbeatDto = new AddHeartbeatDto
             {
                 TokenKey = "",
@@ -73,7 +73,7 @@ namespace Slascone.Provisioning.Sample
             }
             else
             {
-                // After successfully generating a heartbeat the client have to check provisioning mode of the license. Is it floating a session has to open. 
+                // After successfully generating a heartbeat the client have to check provisioning mode of the license. Is it floating a session has to be opened. 
                 if (heartbeatResult.LicenseInfo.ProvisioningMode == ProvisioningMode.Floating)
                 {
                     // ToDo: Fill the variables
