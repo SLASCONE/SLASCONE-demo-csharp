@@ -32,6 +32,7 @@ namespace Slascone.Provisioning.Sample
 
             var activatedLicense = await slasconeProxy.ActivateAsync(activateClientDto);
 
+            // If the activation failed, the api server responses with a specific error message which describes the problem. Therefore the LicenseInfo object is declared with null.
             if (activatedLicense.LicenseInfo == null)
             {
                 Console.WriteLine(activatedLicense.WarningInfo.Message);
@@ -65,15 +66,17 @@ namespace Slascone.Provisioning.Sample
 
             var heartbeatResult = await slasconeProxy.AddHeartbeatAsync(heartbeatDto);
 
+            // If the heartbeat failed, the api server responses with a specific error message which describes the problem. Therefore the LicenseInfo object is declared with null.
             if (heartbeatResult.LicenseInfo == null)
             {
                 Console.WriteLine(heartbeatResult.WarningInfo.Message);
             }
             else
             {
+                // After successfully generating a heartbeat the client have to check provisioning mode of the license. Is it floating a session has to open. 
                 if (heartbeatResult.LicenseInfo.ProvisioningMode == ProvisioningMode.Floating)
                 {
-                    // ToDo
+                    // ToDo: Fill the variables
                     var sessionDto = new SessionDto
                     {
                         ClientId = "",
@@ -82,6 +85,7 @@ namespace Slascone.Provisioning.Sample
 
                     var openSessionResult = await slasconeProxy.OpenSession(sessionDto);
 
+                    // If the floating limit is reached the api server responses with an Error.
                     if (openSessionResult.SessionViolationInfo == null)
                     {
                         Console.WriteLine(openSessionResult.WarningInfo.Message);
@@ -91,6 +95,7 @@ namespace Slascone.Provisioning.Sample
                         Console.WriteLine("Session active until: " + openSessionResult.SessionViolationInfo.SessionValidUntil);
                     }
 
+                    // If the client have finished his work, he has to close the session. Therefore other clients are not blocked anymore and have not to wait until another Client expired. 
                     var closeSessionResult = await slasconeProxy.CloseSession(sessionDto);
 
                     Console.WriteLine(closeSessionResult);
@@ -102,7 +107,7 @@ namespace Slascone.Provisioning.Sample
         {
             var slasconeProxy = new SampleProxy();
 
-            // ToDo
+            // ToDo: Fill the variables
             var heartbeatDto = new AddHeartbeatDto
             {
                 TokenKey = "",
@@ -116,6 +121,7 @@ namespace Slascone.Provisioning.Sample
 
             var heartbeatResult = await slasconeProxy.AddHeartbeatAsync(heartbeatDto);
 
+            // If the heartbeat failed, the api server responses with a specific error message which describes the problem. Therefore the LicenseInfo object is declared with null.
             if (heartbeatResult.LicenseInfo == null)
             {
                 Console.WriteLine(heartbeatResult.WarningInfo.Message);
@@ -125,7 +131,7 @@ namespace Slascone.Provisioning.Sample
                 Console.WriteLine("Successfully created heartbeat.");
             }
 
-            // ToDo
+            // ToDo: Fill the variables
             var analyticalHb = new AnalyticalHeartbeat();
             analyticalHb.Heartbeat = new List<AnalyticalFieldValue>();
             analyticalHb.ClientId = "";
@@ -134,7 +140,7 @@ namespace Slascone.Provisioning.Sample
 
             Console.WriteLine(analyticalHeartbeatResult);
 
-            // ToDo
+            // ToDo: Fill the variables
             var usageHeartbeat = new UsageHeartbeatDto();
             usageHeartbeat.UsageHeartbeat = new List<UsageHeartbeatValue>();
             usageHeartbeat.ClientId = "";
@@ -156,7 +162,7 @@ namespace Slascone.Provisioning.Sample
 
             if (activatedLicense.LicenseInfo != null)
             {
-                // ToDo
+                // ToDo: Fill the variables
                 var unassignDto = new UnassignDto
                 {
                     TokenKey = ""
@@ -167,7 +173,7 @@ namespace Slascone.Provisioning.Sample
                 Console.WriteLine(unassignResult);
             }
 
-            //ToDo
+            // ToDo: Fill the variables
             var consumptionHeartbeat = new ConsumptionHeartbeatDto();
             consumptionHeartbeat.ClientId = "";
             consumptionHeartbeat.ConsumptionHeartbeat = new List<ConsumptionHeartbeatValueDto>();
